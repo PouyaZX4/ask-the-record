@@ -1,0 +1,57 @@
+{
+ "measured_at": "2026-09-21T03:22:03.550305+00:00",
+ "deployment": "https://ask-the-record.vercel.app",
+ "model": "gemini-3.6-flash",
+ "method": "anonymous POST /api/ask, no credentials, sequential, wall clock around each request",
+ "runs": [
+  {
+   "index": 0,
+   "question": "Who found finding B1, and what is the comment id?",
+   "http": 200,
+   "elapsed_s": 33.8,
+   "instrument": "kb",
+   "violations": [],
+   "answer_sha256": "41c14d8bcd22eb75"
+  },
+  {
+   "index": 1,
+   "question": "Is the patch for finding B1 merged into origin/main?",
+   "http": 200,
+   "elapsed_s": 14.9,
+   "instrument": "kb",
+   "violations": [],
+   "answer_sha256": "7d1d59d49d8f4b25"
+  },
+  {
+   "index": 2,
+   "question": "How many locatable comments support finding B8?",
+   "http": 200,
+   "elapsed_s": 15.2,
+   "instrument": "kb",
+   "violations": [],
+   "answer_sha256": "2582e67bef032b66"
+  },
+  {
+   "index": 3,
+   "question": "What is the status and expiry of claim-ledger-population?",
+   "http": 200,
+   "elapsed_s": 13.8,
+   "instrument": "data",
+   "violations": [],
+   "answer_sha256": "3377383c3f106183"
+  },
+  {
+   "index": 4,
+   "question": "How many of the 74 articles mention Kubernetes?",
+   "http": 200,
+   "elapsed_s": 21.4,
+   "instrument": "kb",
+   "violations": [],
+   "answer_sha256": "a7578ab0f387bfe6"
+  }
+ ],
+ "range_s": [
+  13.8,
+  33.8
+ ]
+}
