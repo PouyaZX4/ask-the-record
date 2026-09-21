@@ -78,7 +78,10 @@ VERDICTS = ("STANDING", "RETRACTED", "SUPERSEDED", "UNBUILT", "EXPIRED",
 
 def contract_violations(answer, instrument, retrieved, reads, question):
     """Same checks the graded CLI harness applies (R6/R7/R8). A dirty answer is
-    labelled on screen rather than rendered clean."""
+    labelled on screen rather than rendered clean.
+
+    Checks that citations are PRESENT and well formed. It does not fetch them —
+    no HTTP resolution is performed, and the page says so."""
     v = []
     for f in ("ANSWER:", "SOURCES:", "EVIDENCE DATE:", "VERDICT:", "UNCERTAINTY:"):
         if f not in answer:

@@ -64,8 +64,9 @@
     Identifier lookups route to a GROQ endpoint; prose questions route to a Knowledge Base. The
     badge shows which one answered.<br>
     Every answer is checked against the same output contract the independent reviewer graded. If one
-    fails — missing field, empty uncertainty, a citation that does not resolve — this page says so
-    in orange rather than rendering it clean.
+    is missing a required field, has empty uncertainty, or fails the citation requirement for the
+    instrument that produced it, this page shows the violation instead of rendering the answer
+    cleanly. It checks that citations are present and well formed; it does not fetch them.
   </footer>
 </main>
 
