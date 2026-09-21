@@ -73,23 +73,27 @@ BLOCK. Question four answered the wrong claim and matched `STANDING` by accident
 answer for the wrong reason. Synthetic fixtures showed failed retrievals reaching the model and
 producing answers that exited zero.
 
-The repair was not a better prompt. It was the discovery that the Knowledge Base cannot bind
-identifiers to fields, which took a second endpoint to prove.
+In this Knowledge Base build, the retrieved prose did not reliably bind the target identifier to
+its fields. Routing exact claim lookups to the dataset addressed that retrieval limitation;
+separate validator repairs addressed the fail-open controls.
 
 `evidence/harness-graded-v6-2026-09-20-aethar/` holds the later run where **the five frozen
 questions held**, `gemini-3.6-flash`, exit 0.
 
 The v6 candidate enforced the Knowledge Base citation rule as path **or** kb id where the contract
 required **both**. The live answers happened to supply both, so their content held, but the guard
-was weaker than specified. `harness/ask.py` fixes that to an AND, and
-`evidence/harness-graded-v7-2026-09-20-aethar/` is an independent run of **that exact file** — five
-of five, exit 0, hash matching the copy in this repo.
+was weaker than specified. Version 7 corrected that to an AND and received its own independent
+run. A later review found that malformed verdicts could bypass verdict-dependent checks.
+Version 8 rejects those values; `evidence/harness-graded-v8-2026-09-21-aethar/` records five of
+five, exit 0, with the CLI hash matching `harness/ask.py` in this repo. Earlier transcripts remain
+evidence for their respective versions.
 
 No transcript was regenerated for a better result.
 
 ## What this does not establish
 
-The five questions held on **one graded run**, one model, one key. That is not general reliability.
+The current CLI's five questions held on **one v8 graded run**, one model, one key. That is not
+general reliability.
 
 The snapshot bounding is modest and the agent says so itself: it cannot see what happened to a
 branch after the record was built. It happens to still be right about that branch. That is luck,
