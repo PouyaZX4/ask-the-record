@@ -20,8 +20,8 @@ The ledger claims three finders. One has a permalink. The agent reports the rece
 not the number claimed.
 
 Two more it will tell you about its own author: the fix for finding B1 is **not merged into
-`origin/main`**, and of fourteen findings from eight outside engineers, **two are implemented and
-twelve are not.**
+`origin/main`**, and of 14 findings — **12 raised by the 8 outside engineers, 2 internal** — two are
+implemented and twelve are not.
 
 ## Three rules in the schema, not the prompt
 
@@ -33,9 +33,9 @@ twelve are not.**
 
 ## Two instruments, because one could not do it
 
-A Knowledge Base answers questions spread across prose. It does **not** preserve
-identifier-to-field bindings — measured: `claim-ledger-population` appears once in 190,503
-characters of entries, as a label, with its values unbound. So exact-object lookups route to a
+A Knowledge Base answers questions spread across prose. **In this build** I could not recover a
+reliable identifier-to-field binding — measured: `claim-ledger-population` appears once in the
+entries, as a label in a Sources list, with its values present but unbound to that id. So exact-object lookups route to a
 second endpoint serving GROQ over the dataset, where `*[_id=="claim-ledger-population"]` returns
 one document with its fields and a resolvable `sourceUrl`.
 
@@ -69,8 +69,15 @@ The repair was not a better prompt. It was the discovery that the Knowledge Base
 identifiers to fields, which took a second endpoint to prove.
 
 `evidence/harness-graded-v6-2026-09-20-aethar/` holds the later run where **the five frozen
-questions held**, `gemini-3.6-flash`, exit 0. Both transcripts are unedited. Neither was
-regenerated for a better result.
+questions held**, `gemini-3.6-flash`, exit 0.
+
+The v6 candidate enforced the Knowledge Base citation rule as path **or** kb id where the contract
+required **both**. The live answers happened to supply both, so their content held, but the guard
+was weaker than specified. `harness/ask.py` fixes that to an AND, and
+`evidence/harness-graded-v7-2026-09-20-aethar/` is an independent run of **that exact file** — five
+of five, exit 0, hash matching the copy in this repo.
+
+No transcript was regenerated for a better result.
 
 ## What this does not establish
 
@@ -93,4 +100,5 @@ export GEMINI_PAID_KEY=...
 python3 harness/ask.py --all
 ```
 
-No dependencies beyond the standard library.
+The Python harness and serverless agent use only the Python standard library. The Studio uses
+Sanity's normal React and TypeScript dependencies.
