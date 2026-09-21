@@ -10,6 +10,7 @@ That fixes WHICH question can be asked, not how many times. The throttle below i
 per-instance and was measured failing against parallel load — a speed bump, not a
 control. The only hard ceiling is the budget cap on the model project.
 """
+import hashlib
 import json
 import os
 import re
@@ -311,7 +312,15 @@ class handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self):
-        self._send(200, {"questions": QUESTIONS, "model": MODEL, "snapshot": SNAPSHOT_DATE})
+        """Reports the sha256 of this file so anyone can verify which source the
+        deployment is actually serving, rather than trusting that a push landed."""
+        try:
+            with open(__file__, "rb") as fh:
+                source_sha = hashlib.sha256(fh.read()).hexdigest()
+        except Exception:
+            source_sha = None
+        self._send(200, {"questions": QUESTIONS, "model": MODEL,
+                         "snapshot": SNAPSHOT_DATE, "source_sha256": source_sha})
 
     def do_POST(self):
         try:

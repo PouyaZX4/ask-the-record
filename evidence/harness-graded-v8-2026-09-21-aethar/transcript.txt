@@ -1,0 +1,86 @@
+model gemini-3.6-flash · temp 0 · snapshot 2026-09-20
+key: GEMINI_PAID_KEY (billed)
+kb   endpoint · 20,197 chars context · kb kbjnxAgyAimV
+data endpoint · 4,908 chars context · GROQ over production
+routing: A19 — claim-* questions to dataset, everything else to the knowledge base
+
+==============================================================================
+Q1: Who found finding B1, and what is the comment id?
+==============================================================================
+[instrument: kb]
+ANSWER: Finding B1 was found by outside contributor pm25coder, and the comment ID is `3eanf` (on article `4590564`).
+
+SOURCES: error_classification/catch_block_splitting, claim_registry/b_series, patch_status/findings (knowledge base id: kbjnxAgyAimV)
+
+EVIDENCE DATE: 2026-09-06
+
+VERDICT: STANDING
+
+UNCERTAINTY: This answer cannot establish whether any external comments or profile details have changed after the snapshot date of 2026-09-20. Additionally, no expiry date was explicitly set for this finding record in the registry.
+
+[read: claim_registry/b_series, error_classification/catch_block_splitting, p]
+
+==============================================================================
+Q2: Is the patch for finding B1 merged into origin/main?
+==============================================================================
+[instrument: kb]
+ANSWER: The patch for finding B1 (commit `dd1a654` on branch `fix/exec-comparator-error`) is not merged into `origin/main`. This is a snapshot claim regarding mutable external state: as of 2026-09-19 (snapshot date 2026-09-20), the patch is implemented on its feature branch but not merged into `origin/main`, and the record cannot see changes after it.
+
+SOURCES: patch_status/findings, claim_registry/b_series (knowledge base kbjnxAgyAimV)
+
+EVIDENCE DATE: 2026-09-19
+
+VERDICT: STANDING
+
+UNCERTAINTY: The record cannot establish whether commit `dd1a654` or branch `fix/exec-comparator-error` was merged into `origin/main` after the snapshot date (2026-09-20), nor whether any pull request has been opened since that time.
+
+[read: patch_status/findings, claim_registry/b_series]
+
+==============================================================================
+Q3: How many locatable comments support finding B8?
+==============================================================================
+[instrument: kb]
+ANSWER: Finding B8 has 1 locatable comment (Pushpendra `3ee98`), carrying 1 verified receipt. Although 3 independent outside finders are recorded (Vinh Nguyen, Pushpendra (viaSocket), and quashudev), the receipts for the other two finders were not located in the comment trees searched.
+
+SOURCES: claim_registry/b_series (Knowledge base id kbjnxAgyAimV)
+
+EVIDENCE DATE: 2026-09-19
+
+VERDICT: UNBUILT
+
+UNCERTAINTY: The record cannot establish whether the unlocatable receipts exist in the 57 older published articles that have never been mined, or whether they were deleted or omitted from the searched comment threads.
+
+[read: claim_registry/b_series | patch_status/findings]
+
+==============================================================================
+Q4: What is the status and expiry of claim-ledger-population?
+==============================================================================
+[instrument: data]
+ANSWER: The claim `claim-ledger-population` states: "The ledger draws from the comment threads on three articles, not a sweep of all 74 published articles. The older 57 have never been mined. This is a floor, not a total." Its recorded status is standing, and its expiry status is no_expiry_set (no expiry date was set).
+
+SOURCES: claim-ledger-population, https://dev.to/kenielzep97/my-harness-used-one-label-for-three-different-failures-2gc3
+
+EVIDENCE DATE: 2026-09-11
+
+VERDICT: STANDING
+
+UNCERTAINTY: This answer cannot establish whether any of the older 57 articles have been mined after the asOf date (2026-09-11) or the snapshot date of 2026-09-20, nor can it establish a future expiry date since none is set in the record.
+
+[read: *[_id == "claim-ledger-population"] {
+  _id,
+  text,
+  sourceType,
+  s]
+
+==============================================================================
+Q5: How many of the 74 articles mention Kubernetes?
+==============================================================================
+[instrument: kb]
+ANSWER: The record does not contain information on how many of the 74 published articles mention Kubernetes.
+SOURCES: ai_safety_governance/cyber_access_audits, ai_safety_governance/safety_narratives, claim_provenance, claim_registry/a_series, claim_registry/b_series, evidence_standards/claim_escalation, patch_status/findings kbjnxAgyAimV
+EVIDENCE DATE: 2026-09-19
+VERDICT: INSUFFICIENT_EVIDENCE
+UNCERTAINTY: The knowledge base notes that 74 published articles exist, but it does not record whether or how many of those articles mention Kubernetes.
+
+[read: ai_safety_governance/cyber_access_audits, ai_safety_governance/safety_ | claim_provenance, claim_registry/a_series, claim_registry/b_series, ev]
+
