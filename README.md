@@ -65,7 +65,8 @@ evidence/   breaker verdicts and unedited transcripts, including the failed run
 
 ## The evidence directory is the point
 
-The harness was written by one agent and graded by another that did not write it.
+The harness was written by one agent and graded by separate, owner-assigned AI reviewer sessions
+that did not implement it. No human outside this project tested it.
 
 The **first graded run failed** — `evidence/harness-breaker-2026-09-20-kairos/VERDICT.md` is a
 BLOCK. Question four answered the wrong claim and matched `STANDING` by accident, which is a right
