@@ -1,0 +1,150 @@
+[
+  {
+    "case": "valid_kb",
+    "question": "Who found finding B1, and what is the comment id?",
+    "exit_code": 0,
+    "model_calls": 2,
+    "stdout": "model gemini-3.6-flash \u00b7 temp 0 \u00b7 snapshot 2026-09-20\nkey: synthetic\nkb   endpoint \u00b7 17 chars context \u00b7 kb kbjnxAgyAimV\ndata endpoint \u00b7 17 chars context \u00b7 GROQ over production\nrouting: A19 \u2014 claim-* questions to dataset, everything else to the knowledge base\n\n==============================================================================\nQ1: Who found finding B1, and what is the comment id?\n==============================================================================\n[instrument: kb]\nANSWER: Finding B1 was found by pm25coder. The comment ID is 3eanf.\nSOURCES: claim_registry/b_series kbjnxAgyAimV\nEVIDENCE DATE: 2026-09-06\nVERDICT: STANDING\nUNCERTAINTY: Snapshot only.\n\n[read: claim_registry/b_series]\n\n",
+    "want": 0,
+    "observed_reason": [
+      "[instrument: kb]"
+    ]
+  },
+  {
+    "case": "valid_data",
+    "question": "What is the status and expiry of claim-ledger-population?",
+    "exit_code": 0,
+    "model_calls": 2,
+    "stdout": "model gemini-3.6-flash \u00b7 temp 0 \u00b7 snapshot 2026-09-20\nkey: synthetic\nkb   endpoint \u00b7 17 chars context \u00b7 kb kbjnxAgyAimV\ndata endpoint \u00b7 17 chars context \u00b7 GROQ over production\nrouting: A19 \u2014 claim-* questions to dataset, everything else to the knowledge base\n\n==============================================================================\nQ1: What is the status and expiry of claim-ledger-population?\n==============================================================================\n[instrument: data]\nANSWER: claim-ledger-population is standing and no_expiry_set.\nSOURCES: claim-ledger-population https://example.org/ledger\nEVIDENCE DATE: 2026-09-11\nVERDICT: STANDING\nUNCERTAINTY: Snapshot only; no_expiry_set is not permanence.\n\n[read: *[_id==\"claim-ledger-population\"]]\n\n",
+    "want": 0,
+    "observed_reason": [
+      "[instrument: data]"
+    ]
+  },
+  {
+    "case": "empty_retrieval",
+    "question": "Who found finding B1, and what is the comment id?",
+    "exit_code": 1,
+    "model_calls": 1,
+    "stdout": "model gemini-3.6-flash \u00b7 temp 0 \u00b7 snapshot 2026-09-20\nkey: synthetic\nkb   endpoint \u00b7 17 chars context \u00b7 kb kbjnxAgyAimV\ndata endpoint \u00b7 17 chars context \u00b7 GROQ over production\nrouting: A19 \u2014 claim-* questions to dataset, everything else to the knowledge base\n\n==============================================================================\nQ1: Who found finding B1, and what is the comment id?\n==============================================================================\nFAILURE: knowledge_base_read ['claim_registry/b_series']: empty retrieval\n\n",
+    "want": 1,
+    "observed_reason": [
+      "FAILURE: knowledge_base_read ['claim_registry/b_series']: empty retrieval"
+    ]
+  },
+  {
+    "case": "mcp_tool_error",
+    "question": "Who found finding B1, and what is the comment id?",
+    "exit_code": 1,
+    "model_calls": 1,
+    "stdout": "model gemini-3.6-flash \u00b7 temp 0 \u00b7 snapshot 2026-09-20\nkey: synthetic\nkb   endpoint \u00b7 17 chars context \u00b7 kb kbjnxAgyAimV\ndata endpoint \u00b7 17 chars context \u00b7 GROQ over production\nrouting: A19 \u2014 claim-* questions to dataset, everything else to the knowledge base\n\n==============================================================================\nQ1: Who found finding B1, and what is the comment id?\n==============================================================================\nFAILURE: knowledge_base_read ['claim_registry/b_series']: endpoint returned isError \u2014 nope\n\n",
+    "want": 1,
+    "observed_reason": [
+      "FAILURE: knowledge_base_read ['claim_registry/b_series']: endpoint returned isError \u2014 nope"
+    ]
+  },
+  {
+    "case": "no_paths",
+    "question": "Who found finding B1, and what is the comment id?",
+    "exit_code": 1,
+    "model_calls": 1,
+    "stdout": "model gemini-3.6-flash \u00b7 temp 0 \u00b7 snapshot 2026-09-20\nkey: synthetic\nkb   endpoint \u00b7 17 chars context \u00b7 kb kbjnxAgyAimV\ndata endpoint \u00b7 17 chars context \u00b7 GROQ over production\nrouting: A19 \u2014 claim-* questions to dataset, everything else to the knowledge base\n\n==============================================================================\nQ1: Who found finding B1, and what is the comment id?\n==============================================================================\nFAILURE: model called knowledge_base_read with no paths\n\n",
+    "want": 1,
+    "observed_reason": [
+      "FAILURE: model called knowledge_base_read with no paths"
+    ]
+  },
+  {
+    "case": "no_retrieval",
+    "question": "Who found finding B1, and what is the comment id?",
+    "exit_code": 1,
+    "model_calls": 1,
+    "stdout": "model gemini-3.6-flash \u00b7 temp 0 \u00b7 snapshot 2026-09-20\nkey: synthetic\nkb   endpoint \u00b7 17 chars context \u00b7 kb kbjnxAgyAimV\ndata endpoint \u00b7 17 chars context \u00b7 GROQ over production\nrouting: A19 \u2014 claim-* questions to dataset, everything else to the knowledge base\n\n==============================================================================\nQ1: Who found finding B1, and what is the comment id?\n==============================================================================\n[instrument: kb]\nANSWER: Finding B1 was found by pm25coder. The comment ID is 3eanf.\nSOURCES: claim_registry/b_series kbjnxAgyAimV\nEVIDENCE DATE: 2026-09-06\nVERDICT: STANDING\nUNCERTAINTY: Snapshot only.\n\n[HARNESS] CONTRACT VIOLATION \u2014 answered with a verdict but read zero entries; question names 'B1' but it is absent from retrieved text\n\n[read: none]\n\n",
+    "want": 1,
+    "observed_reason": [
+      "[instrument: kb]",
+      "[HARNESS] CONTRACT VIOLATION \u2014 answered with a verdict but read zero entries; question names 'B1' but it is absent from retrieved text"
+    ]
+  },
+  {
+    "case": "empty_uncertainty",
+    "question": "Who found finding B1, and what is the comment id?",
+    "exit_code": 1,
+    "model_calls": 2,
+    "stdout": "model gemini-3.6-flash \u00b7 temp 0 \u00b7 snapshot 2026-09-20\nkey: synthetic\nkb   endpoint \u00b7 17 chars context \u00b7 kb kbjnxAgyAimV\ndata endpoint \u00b7 17 chars context \u00b7 GROQ over production\nrouting: A19 \u2014 claim-* questions to dataset, everything else to the knowledge base\n\n==============================================================================\nQ1: Who found finding B1, and what is the comment id?\n==============================================================================\n[instrument: kb]\nANSWER: Finding B1 was found by pm25coder. The comment ID is 3eanf.\nSOURCES: claim_registry/b_series kbjnxAgyAimV\nEVIDENCE DATE: 2026-09-06\nVERDICT: STANDING\nUNCERTAINTY:\n\n[HARNESS] CONTRACT VIOLATION \u2014 UNCERTAINTY is empty\n\n[read: claim_registry/b_series]\n\n",
+    "want": 1,
+    "observed_reason": [
+      "[instrument: kb]",
+      "[HARNESS] CONTRACT VIOLATION \u2014 UNCERTAINTY is empty"
+    ]
+  },
+  {
+    "case": "http_failure",
+    "question": "Who found finding B1, and what is the comment id?",
+    "exit_code": 1,
+    "model_calls": 0,
+    "stdout": "FAILURE: Synthetic HTTP 401\n",
+    "want": 1,
+    "observed_reason": [
+      "FAILURE: Synthetic HTTP 401"
+    ]
+  },
+  {
+    "case": "missing_source_url",
+    "question": "What is the status and expiry of claim-ledger-population?",
+    "exit_code": 1,
+    "model_calls": 2,
+    "stdout": "model gemini-3.6-flash \u00b7 temp 0 \u00b7 snapshot 2026-09-20\nkey: synthetic\nkb   endpoint \u00b7 17 chars context \u00b7 kb kbjnxAgyAimV\ndata endpoint \u00b7 17 chars context \u00b7 GROQ over production\nrouting: A19 \u2014 claim-* questions to dataset, everything else to the knowledge base\n\n==============================================================================\nQ1: What is the status and expiry of claim-ledger-population?\n==============================================================================\n[instrument: data]\nANSWER: claim-ledger-population is standing and no_expiry_set.\nSOURCES: claim-ledger-population\nEVIDENCE DATE: 2026-09-11\nVERDICT: STANDING\nUNCERTAINTY: Snapshot only; no_expiry_set is not permanence.\n\n[HARNESS] CONTRACT VIOLATION \u2014 dataset answer carries no resolvable URL (A19/R7)\n\n[read: *[_id==\"claim-ledger-population\"]]\n\n",
+    "want": 1,
+    "observed_reason": [
+      "[instrument: data]",
+      "[HARNESS] CONTRACT VIOLATION \u2014 dataset answer carries no resolvable URL (A19/R7)"
+    ]
+  },
+  {
+    "case": "kb_neither",
+    "question": "Who found finding B1, and what is the comment id?",
+    "exit_code": 1,
+    "model_calls": 2,
+    "stdout": "model gemini-3.6-flash \u00b7 temp 0 \u00b7 snapshot 2026-09-20\nkey: synthetic\nkb   endpoint \u00b7 17 chars context \u00b7 kb kbjnxAgyAimV\ndata endpoint \u00b7 17 chars context \u00b7 GROQ over production\nrouting: A19 \u2014 claim-* questions to dataset, everything else to the knowledge base\n\n==============================================================================\nQ1: Who found finding B1, and what is the comment id?\n==============================================================================\n[instrument: kb]\nANSWER: Finding B1 was found by pm25coder. The comment ID is 3eanf.\nSOURCES: none\nEVIDENCE DATE: 2026-09-06\nVERDICT: STANDING\nUNCERTAINTY: Snapshot only.\n\n[HARNESS] CONTRACT VIOLATION \u2014 KB answer cites neither an entry path nor the kb id (A19/R7)\n\n[read: claim_registry/b_series]\n\n",
+    "want": 1,
+    "observed_reason": [
+      "[instrument: kb]",
+      "[HARNESS] CONTRACT VIOLATION \u2014 KB answer cites neither an entry path nor the kb id (A19/R7)"
+    ]
+  },
+  {
+    "case": "kb_path_only",
+    "question": "Who found finding B1, and what is the comment id?",
+    "exit_code": 0,
+    "model_calls": 2,
+    "stdout": "model gemini-3.6-flash \u00b7 temp 0 \u00b7 snapshot 2026-09-20\nkey: synthetic\nkb   endpoint \u00b7 17 chars context \u00b7 kb kbjnxAgyAimV\ndata endpoint \u00b7 17 chars context \u00b7 GROQ over production\nrouting: A19 \u2014 claim-* questions to dataset, everything else to the knowledge base\n\n==============================================================================\nQ1: Who found finding B1, and what is the comment id?\n==============================================================================\n[instrument: kb]\nANSWER: Finding B1 was found by pm25coder. The comment ID is 3eanf.\nSOURCES: claim_registry/b_series\nEVIDENCE DATE: 2026-09-06\nVERDICT: STANDING\nUNCERTAINTY: Snapshot only.\n\n[read: claim_registry/b_series]\n\n",
+    "want": 0,
+    "observed_reason": [
+      "[instrument: kb]"
+    ]
+  },
+  {
+    "case": "empty_verdict",
+    "question": "Who found finding B1, and what is the comment id?",
+    "exit_code": 1,
+    "model_calls": 1,
+    "stdout": "model gemini-3.6-flash \u00b7 temp 0 \u00b7 snapshot 2026-09-20\nkey: synthetic\nkb   endpoint \u00b7 17 chars context \u00b7 kb kbjnxAgyAimV\ndata endpoint \u00b7 17 chars context \u00b7 GROQ over production\nrouting: A19 \u2014 claim-* questions to dataset, everything else to the knowledge base\n\n==============================================================================\nQ1: Who found finding B1, and what is the comment id?\n==============================================================================\n[instrument: kb]\nANSWER: Finding B1 was found by pm25coder. The comment ID is 3eanf.\nSOURCES: claim_registry/b_series kbjnxAgyAimV\nEVIDENCE DATE: 2026-09-06\nVERDICT:\nUNCERTAINTY: Snapshot only.\n\n[HARNESS] CONTRACT VIOLATION \u2014 VERDICT 'UNCERTAINTY' is not a contract value; answered with a verdict but read zero entries; question names 'B1' but it is absent from retrieved text\n\n[read: none]\n\n",
+    "want": 1,
+    "observed_reason": [
+      "[instrument: kb]",
+      "[HARNESS] CONTRACT VIOLATION \u2014 VERDICT 'UNCERTAINTY' is not a contract value; answered with a verdict but read zero entries; question names 'B1' but it is absent from retrieved text"
+    ]
+  },
+  {
+    "case": "q5_routes_kb",
+    "question": "How many of the 74 articles mention Kubernetes?",
+    "exit_code": 0,
+    "model_calls": 2,
+    "stdout": "model gemini-3.6-flash \u00b7 temp 0 \u00b7 snapshot 2026-09-20\nkey: synthetic\nkb   endpoint \u00b7 17 chars context \u00b7 kb kbjnxAgyAimV\ndata endpoint \u00b7 17 chars context \u00b7 GROQ over production\nrouting: A19 \u2014 claim-* questions to dataset, everything else to the knowledge base\n\n==============================================================================\nQ1: How many of the 74 articles mention Kubernetes?\n==============================================================================\n[instrument: kb]\nANSWER: Finding B1 was found by pm25coder. The comment ID is 3eanf.\nSOURCES: claim_registry/b_series kbjnxAgyAimV\nEVIDENCE DATE: 2026-09-06\nVERDICT: STANDING\nUNCERTAINTY: Snapshot only.\n\n[read: claim_registry/b_series]\n\n",
+    "want": 0,
+    "observed_reason": [
+      "[instrument: kb]"
+    ]
+  }
+]

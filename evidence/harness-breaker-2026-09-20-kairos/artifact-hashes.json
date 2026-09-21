@@ -1,0 +1,13 @@
+{
+  "VERDICT.md": "9911f24800759e9142e915470cea5a010d10528acf05c662af90a0d503cd14f7",
+  "ask.py": "0e9631f6eb339276e571de1d1aac5c5f2d2df9db15f7adbbb6d5012ee29cf2e3",
+  "claim-ledger-population.json": "aec0035b5661afd34a29d16ba0a4029b05a76304567eb566c5cb0a0480283063",
+  "contract.md": "b03efb5b01e4e128031a35b68507aba750c0417aacaaf21db9111b01673a3cc4",
+  "control-probes.json": "0ee6b4bb6e6aeb69703ac485fa23b7e2ff2375f1cdfc62071912c933112df79d",
+  "live-network-run.json": "f54195b3b05c9917c5939eeaccb768146bd0253450febcbd326c4a981523c021",
+  "live-network-transcript.txt": "06a63488fe5bd19e3bce73109a3b2220d8837241464f5a475ba4e34674a68cdf",
+  "live-run.json": "66df0e3be8275dcb67b206d2dd211802838ea32cb9d91ea359f5e0b29e327cb2",
+  "live-transcript.txt": "57ee232bb25a64a762ff3962a669c80c62c64ac2f9f1c55855480c3863c1b0d8",
+  "manifest.json": "2bd0b2629cbf9cc9eea3c1c4e653557f3337ff7cac69f5ac9ce7f94ac96f0bf3",
+  "probe_controls.py": "f675614ce8ba94e026eda690d1641f1a79b78d00930c73963852b9d66143a706"
+}

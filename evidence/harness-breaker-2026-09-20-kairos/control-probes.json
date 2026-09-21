@@ -1,0 +1,190 @@
+[
+  {
+    "case": "empty_retrieval",
+    "exit_code": 0,
+    "model_calls": 2,
+    "stdout": "model gemini-2.5-flash \u00b7 temp 0 \u00b7 kb kbjnxAgyAimV \u00b7 snapshot 2026-09-20 \u00b7 context 56 chars\n\n==============================================================================\nQ1: synthetic question\n==============================================================================\nANSWER: Synthetic unsupported assertion.\nSOURCES: fabricated/path\nEVIDENCE DATE: 2026-09-11\nVERDICT: STANDING\nUNCERTAINTY: No independent verification.\n\n[entries read: synthetic/path]\n\n",
+    "events": [
+      {
+        "method": "initialize",
+        "tool": null
+      },
+      {
+        "method": "tools/call",
+        "tool": "initial_context"
+      },
+      {
+        "method": "tools/call",
+        "tool": "knowledge_base_read"
+      },
+      {
+        "model_received": [
+          {
+            "role": "user",
+            "parts": [
+              {
+                "text": "synthetic question"
+              }
+            ]
+          },
+          {
+            "role": "model",
+            "parts": [
+              {
+                "functionCall": {
+                  "name": "knowledge_base_read",
+                  "args": {
+                    "paths": [
+                      "synthetic/path"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "functionResponse": {
+                  "name": "knowledge_base_read",
+                  "response": {
+                    "content": "Empty retrieval."
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "case": "mcp_tool_error",
+    "exit_code": 0,
+    "model_calls": 2,
+    "stdout": "model gemini-2.5-flash \u00b7 temp 0 \u00b7 kb kbjnxAgyAimV \u00b7 snapshot 2026-09-20 \u00b7 context 56 chars\n\n==============================================================================\nQ1: synthetic question\n==============================================================================\nANSWER: Synthetic unsupported assertion.\nSOURCES: fabricated/path\nEVIDENCE DATE: 2026-09-11\nVERDICT: STANDING\nUNCERTAINTY: No independent verification.\n\n[entries read: synthetic/path]\n\n",
+    "events": [
+      {
+        "method": "initialize",
+        "tool": null
+      },
+      {
+        "method": "tools/call",
+        "tool": "initial_context"
+      },
+      {
+        "method": "tools/call",
+        "tool": "knowledge_base_read"
+      },
+      {
+        "model_received": [
+          {
+            "role": "user",
+            "parts": [
+              {
+                "text": "synthetic question"
+              }
+            ]
+          },
+          {
+            "role": "model",
+            "parts": [
+              {
+                "functionCall": {
+                  "name": "knowledge_base_read",
+                  "args": {
+                    "paths": [
+                      "synthetic/path"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "functionResponse": {
+                  "name": "knowledge_base_read",
+                  "response": {
+                    "content": "Synthetic entry unavailable"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "case": "no_retrieval",
+    "exit_code": 0,
+    "model_calls": 1,
+    "stdout": "model gemini-2.5-flash \u00b7 temp 0 \u00b7 kb kbjnxAgyAimV \u00b7 snapshot 2026-09-20 \u00b7 context 56 chars\n\n==============================================================================\nQ1: synthetic question\n==============================================================================\nANSWER: Synthetic unsupported assertion.\nSOURCES: fabricated/path\nEVIDENCE DATE: 2026-09-11\nVERDICT: STANDING\nUNCERTAINTY: No independent verification.\n\n[entries read: none]\n\n",
+    "events": [
+      {
+        "method": "initialize",
+        "tool": null
+      },
+      {
+        "method": "tools/call",
+        "tool": "initial_context"
+      },
+      {
+        "model_received": [
+          {
+            "role": "user",
+            "parts": [
+              {
+                "text": "synthetic question"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "case": "empty_uncertainty",
+    "exit_code": 0,
+    "model_calls": 1,
+    "stdout": "model gemini-2.5-flash \u00b7 temp 0 \u00b7 kb kbjnxAgyAimV \u00b7 snapshot 2026-09-20 \u00b7 context 56 chars\n\n==============================================================================\nQ1: synthetic question\n==============================================================================\nANSWER: Synthetic unsupported assertion.\nSOURCES: fabricated/path\nEVIDENCE DATE: 2026-09-11\nVERDICT: STANDING\nUNCERTAINTY:\n\n[HARNESS] Contract violation \u2014 UNCERTAINTY is empty.\n\n[entries read: none]\n\n",
+    "events": [
+      {
+        "method": "initialize",
+        "tool": null
+      },
+      {
+        "method": "tools/call",
+        "tool": "initial_context"
+      },
+      {
+        "model_received": [
+          {
+            "role": "user",
+            "parts": [
+              {
+                "text": "synthetic question"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "case": "http_failure",
+    "exit_code": 1,
+    "model_calls": 0,
+    "stdout": "FAILURE: Synthetic HTTP 401\n",
+    "events": [
+      {
+        "method": "initialize",
+        "tool": null
+      }
+    ]
+  }
+]

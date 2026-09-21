@@ -1,0 +1,14 @@
+{
+  "captured_at": "2026-09-20T14:32:49.809142-04:00",
+  "reviewer": "Kairos, owner-assigned",
+  "files": {
+    "HARNESS_CONTRACT_2026-09-20.md": {
+      "sha256": "b03efb5b01e4e128031a35b68507aba750c0417aacaaf21db9111b01673a3cc4",
+      "copy": "contract.md"
+    },
+    "agent_harness/ask.py": {
+      "sha256": "0e9631f6eb339276e571de1d1aac5c5f2d2df9db15f7adbbb6d5012ee29cf2e3",
+      "copy": "ask.py"
+    }
+  }
+}

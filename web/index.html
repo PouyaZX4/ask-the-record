@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ask the record — Self-Correcting Systems</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --line:#30363d; --ink:#e6edf3;
+    --dim:#8b949e; --accent:#58a6ff; --ok:#3fb950; --warn:#d29922;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;padding:28px 18px 60px}
+  main{max-width:820px;margin:0 auto}
+  h1{font-size:19px;margin:0 0 6px;font-weight:600}
+  .sub{color:var(--dim);font-size:13px;margin:0 0 22px}
+  .sub a{color:var(--accent)}
+  .qs{display:flex;flex-direction:column;gap:8px;margin-bottom:22px}
+  button{all:unset;cursor:pointer;background:var(--panel);border:1px solid var(--line);
+    border-radius:6px;padding:11px 13px;font:inherit;font-size:14px;color:var(--ink)}
+  button:hover:not(:disabled){border-color:var(--accent)}
+  button:disabled{opacity:.45;cursor:default}
+  button .n{color:var(--dim);margin-right:9px}
+  #out{display:none;border:1px solid var(--line);border-radius:6px;background:var(--panel);
+    padding:16px;white-space:pre-wrap;word-break:break-word}
+  #out.show{display:block}
+  .badge{display:inline-block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+    border:1px solid var(--line);border-radius:4px;padding:2px 7px;margin:0 6px 12px 0;color:var(--dim)}
+  .badge.kb{border-color:var(--accent);color:var(--accent)}
+  .badge.data{border-color:var(--ok);color:var(--ok)}
+  .field{margin:0 0 12px}
+  .k{color:var(--dim);font-size:11px;letter-spacing:.07em;text-transform:uppercase;display:block;
+    margin-bottom:3px}
+  .read{color:var(--dim);font-size:12px;border-top:1px solid var(--line);padding-top:11px;margin-top:14px}
+  .err{color:var(--warn)}
+  .viol{border:1px solid var(--warn);border-radius:6px;padding:10px 12px;margin:14px 0 0;
+    color:var(--warn);font-size:13px}
+  .viol b{display:block;font-size:11px;letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px}
+  footer{color:var(--dim);font-size:12px;margin-top:30px;border-top:1px solid var(--line);
+    padding-top:14px;line-height:1.9}
+  footer a{color:var(--accent)}
+  code{color:var(--ink)}
+</style>
+</head>
+<body>
+<main>
+  <h1>Ask the record</h1>
+  <p class="sub">
+    A live agent over a public Sanity dataset of 120 documents — 74 published articles, 14 defects
+    outside engineers found in my work, and the claims those produced. It answers from the record
+    or says it cannot. No login. Keys stay on the server.<br>
+    Project <code>u58x3mt0</code> ·
+    <a href="https://u58x3mt0.api.sanity.io/v2025-08-15/data/query/production?query=count(*)">public dataset</a> ·
+    <a href="https://self-correcting-systems.sanity.studio/">Studio</a>
+  </p>
+
+  <div class="qs" id="qs"></div>
+  <div id="out"></div>
+
+  <footer>
+    Questions are fixed: these are the five an independent reviewer graded, so what you see is what
+    was tested.<br>
+    Identifier lookups route to a GROQ endpoint; prose questions route to a Knowledge Base. The
+    badge shows which one answered.<br>
+    Every answer is checked against the same output contract the independent reviewer graded. If one
+    fails — missing field, empty uncertainty, a citation that does not resolve — this page says so
+    in orange rather than rendering it clean.
+  </footer>
+</main>
+
+<script>
+const qs = document.getElementById('qs');
+const out = document.getElementById('out');
+let questions = [];
+
+function esc(s){ return (s||'').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+function render(data){
+  const fields = ['ANSWER','SOURCES','EVIDENCE DATE','VERDICT','UNCERTAINTY'];
+  const text = data.answer || '';
+  let html = `<span class="badge ${data.instrument==='data'?'data':'kb'}">`
+           + `${data.instrument==='data'?'dataset · GROQ':'knowledge base'}</span>`
+           + `<span class="badge">${esc(data.model)}</span>`
+           + `<span class="badge">snapshot ${esc(data.snapshot)}</span>`;
+  fields.forEach((f,i) => {
+    const next = fields[i+1];
+    const re = new RegExp(f + ':\\s*([\\s\\S]*?)(?=' + (next ? next + ':' : '$') + ')');
+    const m = text.match(re);
+    if (m) html += `<div class="field"><span class="k">${f}</span>${esc(m[1].trim())}</div>`;
+  });
+  if (!text.includes('ANSWER:')) html += `<div class="field">${esc(text)}</div>`;
+  if (data.violations && data.violations.length)
+    html += `<div class="viol"><b>contract violation — this answer did not meet the output rules</b>`
+          + esc(data.violations.join('; ')) + `</div>`;
+  if (data.read && data.read.length)
+    html += `<div class="read">read: ${esc(data.read.join('  |  '))}</div>`;
+  out.innerHTML = html;
+}
+
+async function ask(i, btn){
+  document.querySelectorAll('button').forEach(b => b.disabled = true);
+  out.className = 'show';
+  out.textContent = 'asking the record…';
+  try {
+    const r = await fetch('/api/ask', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({index:i})
+    });
+    const data = await r.json();
+    if (!r.ok) {
+      out.innerHTML = `<div class="err">retrieval failed — no answer was generated.<br>`
+                    + `${esc(data.error||('HTTP '+r.status))}</div>`;
+    } else render(data);
+  } catch(e) {
+    out.innerHTML = `<div class="err">${esc(String(e))}</div>`;
+  }
+  document.querySelectorAll('button').forEach(b => b.disabled = false);
+}
+
+fetch('/api/ask').then(r => r.json()).then(d => {
+  questions = d.questions || [];
+  questions.forEach((q,i) => {
+    const b = document.createElement('button');
+    b.innerHTML = `<span class="n">${i+1}</span>${esc(q)}`;
+    b.onclick = () => ask(i,b);
+    qs.appendChild(b);
+  });
+}).catch(() => { qs.textContent = 'could not load questions'; });
+</script>
+</body>
+</html>

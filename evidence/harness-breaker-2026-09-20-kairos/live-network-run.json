@@ -1,0 +1,12 @@
+{
+  "started_at": "2026-09-20T14:35:23.060924-04:00",
+  "finished_at": "2026-09-20T14:36:31.158783-04:00",
+  "exit_code": 0,
+  "command": [
+    "python3",
+    "-u",
+    "agent_outputs/harness-breaker-2026-09-20-kairos/ask.py",
+    "--all"
+  ],
+  "network": "escalated after sandbox DNS failure"
+}

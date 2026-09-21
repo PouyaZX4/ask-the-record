@@ -1,0 +1,86 @@
+model gemini-3.6-flash · temp 0 · snapshot 2026-09-20
+key: GEMINI_PAID_KEY (billed)
+kb   endpoint · 20,197 chars context · kb kbjnxAgyAimV
+data endpoint · 4,908 chars context · GROQ over production
+routing: A19 — claim-* questions to dataset, everything else to the knowledge base
+
+==============================================================================
+Q1: Who found finding B1, and what is the comment id?
+==============================================================================
+[instrument: kb]
+ANSWER: Finding B1 was found by outside contributor pm25coder. The comment ID is `3eanf` (posted on article `4590564` on 2026-09-06). Finding B1 identified that a single catch block in `scripts/judgment/live.mjs` wrapped three distinct failure modes and reported all of them under `EXEC_ARGUMENTS_MISMATCH`, which was resolved by splitting the catch block and introducing distinct error labels. Exactly one verified receipt exists for this finding.
+
+SOURCES: error_classification/catch_block_splitting (kbjnxAgyAimV), claim_registry/b_series (kbjnxAgyAimV), patch_status/findings (kbjnxAgyAimV)
+
+EVIDENCE DATE: 2026-09-06
+
+VERDICT: STANDING
+
+UNCERTAINTY: This answer cannot establish whether patch `dd1a654` (branch `fix/exec-comparator-error`) has been merged into `origin/main` after the snapshot date of 2026-09-20 (recorded as unmerged as of 2026-09-19). Additionally, no expiry date was set for this claim (NO_EXPIRY_SET), and the knowledge base cannot verify comments on the 71 unmined published articles.
+
+[read: claim_registry/b_series, error_classification/catch_block_splitting, p]
+
+==============================================================================
+Q2: Is the patch for finding B1 merged into origin/main?
+==============================================================================
+[instrument: kb]
+ANSWER: The patch for finding B1 (commit `dd1a654` on branch `fix/exec-comparator-error`) is implemented but is not merged into `origin/main`. This is a snapshot claim as of 2026-09-20, and the record cannot see changes after it.
+
+SOURCES: patch_status/findings, claim_registry/b_series (Knowledge base kbjnxAgyAimV)
+
+EVIDENCE DATE: 2026-09-19
+
+VERDICT: STANDING
+
+UNCERTAINTY: The record cannot establish whether commit `dd1a654` or branch `fix/exec-comparator-error` was merged into `origin/main` after the snapshot date of 2026-09-20, nor whether a pull request was opened after that date.
+
+[read: patch_status/findings, claim_registry/b_series]
+
+==============================================================================
+Q3: How many locatable comments support finding B8?
+==============================================================================
+[instrument: kb]
+ANSWER: Finding B8 has 1 locatable comment supporting it (Pushpendra, comment ID `3ee98`). Although three outside finders are recorded in the ledger (Vinh Nguyen, Pushpendra from viaSocket, and quashudev), receipts for Vinh Nguyen and quashudev were not found in the searched comment trees, leaving the row with 1 verified receipt rather than 3. This is a snapshot claim (as of 2026-09-20).
+
+SOURCES: claim_registry/b_series in knowledge base kbjnxAgyAimV
+
+EVIDENCE DATE: 2026-09-19
+
+VERDICT: UNBUILT
+
+UNCERTAINTY: This answer cannot establish whether comment receipts for Vinh Nguyen or quashudev exist in the 57 older, unmined articles, nor can it see any comment additions, deletions, or ledger updates made after the snapshot date of 2026-09-20.
+
+[read: claim_registry/b_series | patch_status/findings, error_classification/catch_block_splitting]
+
+==============================================================================
+Q4: What is the status and expiry of claim-ledger-population?
+==============================================================================
+[instrument: data]
+ANSWER: Claim `claim-ledger-population` ("The ledger draws from the comment threads on three articles, not a sweep of all 74 published articles. The older 57 have never been mined. This is a floor, not a total.") has a status of standing and an expiry status of `no_expiry_set` (no expiry date set).
+
+SOURCES: claim-ledger-population (https://dev.to/kenielzep97/my-harness-used-one-label-for-three-different-failures-2gc3)
+
+EVIDENCE DATE: 2026-09-11
+
+VERDICT: STANDING
+
+UNCERTAINTY: The dataset is a snapshot as of 2026-09-20 and cannot verify whether any of the older 57 articles have been mined or whether the ledger has been updated after that date. Additionally, because status and expiry status are separate fields, the absence of an expiry date (`no_expiry_set`) means no expiry date was recorded, not that the claim is permanently true.
+
+[read: *[_id == "claim-ledger-population"]{
+  _id,
+  text,
+  sourceType,
+  so | *[_id == "claim-ledger-population"]]
+
+==============================================================================
+Q5: How many of the 74 articles mention Kubernetes?
+==============================================================================
+[instrument: kb]
+ANSWER: The record does not contain information on how many of the 74 published articles mention Kubernetes.
+SOURCES: claim_registry/b_series (knowledge base id: kbjnxAgyAimV)
+EVIDENCE DATE: 2026-09-19
+VERDICT: INSUFFICIENT_EVIDENCE
+UNCERTAINTY: The retrieved record notes that 57 of the 74 published articles have never been mined, and contains no mentions or counts regarding Kubernetes in any published article.
+
+[read: ai_safety_governance/cyber_access_audits, ai_safety_governance/safety_ | algorithmic_accountability, authorization_gates/audit_pairing, authori | composition_and_sequence_attacks/detection_and_gates, error_classifica | evidence_standards/verification_and_audit_failures, memory_authority_a | memory_systems/correction_uncertainty, memory_systems/framework, patch]
+
