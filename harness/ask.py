@@ -53,7 +53,13 @@ class Failure(Exception):
 
 
 def load_keys():
+    """Exported environment variables win; the dotfiles are a fallback.
+    The published README documents `export`, and before 2026-09-21 this
+    function ignored the environment entirely."""
     keys = {}
+    for name in ("SANITY_CONTEXT_TOKEN", "GEMINI_PAID_KEY", "GEMINI_API_KEY"):
+        if os.environ.get(name):
+            keys[name] = os.environ[name]
     for path in ("~/.kairos_env", "~/.env"):
         p = os.path.expanduser(path)
         if not os.path.exists(p):
@@ -297,18 +303,32 @@ def ask(question, keys, contexts, token, state):
     if unc is not None and not unc.group(1).strip():
         violations.append("UNCERTAINTY is empty")
 
-    verdict = re.search(r"VERDICT:\s*([A-Z_]+)", answer)
-    v = verdict.group(1) if verdict else None
-    if v and v not in VERDICTS:
-        violations.append(f"VERDICT '{v}' is not a contract value")
+    # A verdict that does not parse is a VIOLATION, never an exemption.
+    # The old pattern was ([A-Z_]+): "standing" and "123" failed to match, became
+    # None, and None is falsy — which silently skipped every check gated on it.
+    # Reproduced 2026-09-21 by an independent review seat.
+    lines = re.findall(r"^[ \t]*VERDICT:[ \t]*(.*)$", answer, re.M)
+    v = None
+    if len(lines) != 1:
+        violations.append(f"expected exactly one VERDICT line, found {len(lines)}")
+    else:
+        raw = lines[0].strip()
+        if not raw:
+            violations.append("VERDICT is empty")
+        elif raw not in VERDICTS:
+            violations.append(f"VERDICT {raw[:40]!r} is not a contract value")
+        else:
+            v = raw
+    # Unparseable verdict must not buy an exemption: treat it as evidence-bearing.
+    evidence_bearing = v != "INSUFFICIENT_EVIDENCE"
 
-    if v and v != "INSUFFICIENT_EVIDENCE" and state["reads"] == 0:
+    if evidence_bearing and state["reads"] == 0:
         violations.append("answered with a verdict but read zero entries")
 
     # R7 keys off the INSTRUMENT (A19), not off every answer
     src = re.search(r"SOURCES:\s*(.*?)(?=\nEVIDENCE DATE:|$)", answer, re.S)
     src_text = src.group(1) if src else ""
-    if v and v != "INSUFFICIENT_EVIDENCE":
+    if evidence_bearing:
         if instrument == "data" and not re.search(r"https?://\S+", src_text):
             violations.append("dataset answer carries no resolvable URL (A19/R7)")
         if instrument == "kb":
@@ -320,9 +340,9 @@ def ask(question, keys, contexts, token, state):
                 violations.append(f"KB answer does not cite the kb id {KB} (A19/R7)")
 
     for ident in re.findall(r"\b(claim-[a-z0-9-]+|[AB]\d+)\b", question):
-        if v != "INSUFFICIENT_EVIDENCE" and ident not in state["retrieved"]:
+        if evidence_bearing and ident not in state["retrieved"]:
             violations.append(f"question names '{ident}' but it is absent from retrieved text")
-        if v != "INSUFFICIENT_EVIDENCE" and ident not in answer:
+        if evidence_bearing and ident not in answer:
             violations.append(f"question names '{ident}' but the answer never names it (R8)")
 
     if violations:

@@ -23,10 +23,15 @@ Two more it will tell you about its own author: the fix for finding B1 is **not 
 `origin/main`**, and of 14 findings — **12 raised by the 8 outside engineers, 2 internal** — two are
 implemented and twelve are not.
 
-## Three rules in the schema, not the prompt
+## Three schema choices, and what actually enforces them
+
+The schema **represents** these distinctions; the endpoint instructions tell the agent to keep
+them; the validator enforces retrieval, required fields, citation syntax and named-object guards
+around the answer. It does not re-verify returned values field by field.
 
 1. **`status` and `expiryStatus` are separate fields.** `no_expiry_set` means nobody dated it —
-   not "permanently true", not "expired". A claim can be `standing` and undated at once.
+   not "permanently true", not "expired". A claim can be `standing` and undated at once. The schema
+   keeps them as separate fields; it does not yet cross-validate `expiryStatus` against `expiresOn`.
 2. **A finding is `commentOn` one article and `writtenUpIn` another.** Different fields, different
    facts, never merged.
 3. **`patch.inMain` is the merge status.** Public is not merged.
@@ -37,10 +42,12 @@ A Knowledge Base answers questions spread across prose. **In this build** I coul
 reliable identifier-to-field binding — measured: `claim-ledger-population` appears once in the
 entries, as a label in a Sources list, with its values present but unbound to that id. So exact-object lookups route to a
 second endpoint serving GROQ over the dataset, where `*[_id=="claim-ledger-population"]` returns
-one document with its fields and a resolvable `sourceUrl`.
+one document with its fields and its stored `sourceUrl`. Citations are checked for presence and
+syntax — never resolved, and not yet proven to belong to the retrieved evidence.
 
-One instrument per question, never both — Sanity silently drops a Knowledge Base if a dataset is
-attached to the same endpoint.
+By default a Context endpoint's mode is derived from its sources: an endpoint with a dataset
+source serves GROQ mode and ignores Knowledge Base sources. So this app uses two endpoints and
+picks exactly one instrument per question.
 
 ```
 self-correcting-systems       initial_context, knowledge_base_read
@@ -98,6 +105,8 @@ on the model project.
 export SANITY_CONTEXT_TOKEN=...   # org-level, Context Viewer
 export GEMINI_PAID_KEY=...
 python3 harness/ask.py --all
+
+# exported variables take precedence; ~/.kairos_env and ~/.env are a fallback
 ```
 
 The Python harness and serverless agent use only the Python standard library. The Studio uses

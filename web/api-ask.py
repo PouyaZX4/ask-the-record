@@ -89,15 +89,28 @@ def contract_violations(answer, instrument, retrieved, reads, question):
     unc = re.search(r"UNCERTAINTY:\s*(.*)", answer, re.S)
     if unc is not None and not unc.group(1).strip():
         v.append("UNCERTAINTY is empty")
-    m = re.search(r"VERDICT:\s*([A-Z_]+)", answer)
-    verdict = m.group(1) if m else None
-    if verdict and verdict not in VERDICTS:
-        v.append(f"VERDICT '{verdict}' is not a contract value")
-    if verdict and verdict != "INSUFFICIENT_EVIDENCE" and reads == 0:
+    # A verdict that does not parse is a VIOLATION, never an exemption.
+    # The old pattern ([A-Z_]+) failed on "standing" / "123", produced None, and
+    # None is falsy — silently skipping every check gated on it. Found by an
+    # independent review seat, 2026-09-21.
+    lines = re.findall(r"^[ \t]*VERDICT:[ \t]*(.*)$", answer, re.M)
+    verdict = None
+    if len(lines) != 1:
+        v.append(f"expected exactly one VERDICT line, found {len(lines)}")
+    else:
+        raw = lines[0].strip()
+        if not raw:
+            v.append("VERDICT is empty")
+        elif raw not in VERDICTS:
+            v.append(f"VERDICT {raw[:40]!r} is not a contract value")
+        else:
+            verdict = raw
+    evidence_bearing = verdict != "INSUFFICIENT_EVIDENCE"
+    if evidence_bearing and reads == 0:
         v.append("answered with a verdict but read nothing")
     src = re.search(r"SOURCES:\s*(.*?)(?=\nEVIDENCE DATE:|$)", answer, re.S)
     src_text = src.group(1) if src else ""
-    if verdict and verdict != "INSUFFICIENT_EVIDENCE":
+    if evidence_bearing:
         if instrument == "data" and not re.search(r"https?://\S+", src_text):
             v.append("dataset answer carries no resolvable URL")
         if instrument == "kb":
@@ -106,7 +119,7 @@ def contract_violations(answer, instrument, retrieved, reads, question):
             if KB not in src_text:
                 v.append("KB answer does not cite the knowledge base id")
     for ident in re.findall(r"\b(claim-[a-z0-9-]+|[AB]\d+)\b", question):
-        if verdict != "INSUFFICIENT_EVIDENCE":
+        if evidence_bearing:
             if ident not in retrieved:
                 v.append(f"'{ident}' is absent from what was retrieved")
             if ident not in answer:
