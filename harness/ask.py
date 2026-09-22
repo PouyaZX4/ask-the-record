@@ -31,6 +31,8 @@ def route(question):
     B-codes, A-codes, shas and Forem ids stay on the Knowledge Base — routing them
     to GROQ would leave Path One demonstrating KB mode on an abstention."""
     return "data" if re.search(r"\bclaim-[a-z0-9-]+", question) else "kb"
+
+
 KB = "kbjnxAgyAimV"
 MODEL = "gemini-3.6-flash"        # A17: per-PROJECT catalogue; billed project serves 3.6
 TEMPERATURE = 0
@@ -159,11 +161,23 @@ READ_TOOL = {
 
 GROQ_TOOL = {
     "name": "groq_query",
-    "description": ("Query the dataset with GROQ. Fetch the exact document by _id when the "
-                    "question names one, and project the fields you need."),
+    "description": (
+        "Query the dataset with GROQ. Schema types: "
+        "'claim' (_id, subject, statement, status, expiryStatus, sourceUrl), "
+        "'finding' (_id, title, finders, verifiedReceipts, status), "
+        "'patch' (_id, findingRef, commitHash, inMain). "
+        "Query examples: *[_type == 'claim' && _id == 'claim-ledger-population'][0], "
+        "*[_type == 'patch' && findingRef._ref == 'finding-b1'][0], "
+        "*[_type == 'finding' && _id == 'finding-b8'][0]"
+    ),
     "parameters": {
         "type": "object",
-        "properties": {"query": {"type": "string", "description": "A GROQ query."}},
+        "properties": {
+            "query": {
+                "type": "string",
+                "description": "A valid GROQ query targeting the exact document _type and _id.",
+            }
+        },
         "required": ["query"],
     },
 }
@@ -256,9 +270,14 @@ def ask(question, keys, contexts, token, state):
 
     if instrument == "data":
         endpoint, tool_decl = DATA_ENDPOINT, GROQ_TOOL
-        extra = ("\n\nThis endpoint queries the dataset directly with GROQ. When the question "
-                 "names a document id, fetch that exact document. SOURCES must include the "
-                 "document's sourceUrl field — a resolvable http(s) URL.\n")
+        extra = (
+            "\n\nThis endpoint queries the dataset directly with GROQ.\n"
+            "Schema & Type Routing Rules:\n"
+            "- Questions naming 'claim-*' MUST query _type == 'claim' by exact _id.\n"
+            "- Questions naming 'finding' or B-codes MUST query _type == 'finding'.\n"
+            "- Questions about patch/merge MUST query _type == 'patch' with findingRef._ref.\n"
+            "- SOURCES must include the document's sourceUrl field — a resolvable http(s) URL.\n"
+        )
 
         def call_tool(args):
             q = (args or {}).get("query")
