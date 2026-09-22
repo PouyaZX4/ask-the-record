@@ -162,20 +162,21 @@ READ_TOOL = {
 GROQ_TOOL = {
     "name": "groq_query",
     "description": (
-        "Query the dataset with GROQ. Schema types: "
-        "'claim' (_id, subject, statement, status, expiryStatus, sourceUrl), "
-        "'finding' (_id, title, finders, verifiedReceipts, status), "
-        "'patch' (_id, findingRef, commitHash, inMain). "
-        "Query examples: *[_type == 'claim' && _id == 'claim-ledger-population'][0], "
-        "*[_type == 'patch' && findingRef._ref == 'finding-b1'][0], "
-        "*[_type == 'finding' && _id == 'finding-b8'][0]"
+        "Query the dataset with GROQ. Schema types & verified fields: "
+        "- 'claim': _id, text, status, expiryStatus, sourceUrl "
+        "- 'finding': _id, title, foundBy, commentIds, status "
+        "- 'patch': _id, findings[]._ref, sha, inMain. "
+        "Canonical query patterns: "
+        "*[_type == 'claim' && _id == 'claim-ledger-population'][0]{status, expiryStatus}, "
+        "*[_type == 'patch' && 'finding-B1' in findings[]._ref][0]{sha, inMain}, "
+        "*[_type == 'finding' && _id == 'finding-B8'][0]{title, commentIds, status}"
     ),
     "parameters": {
         "type": "object",
         "properties": {
             "query": {
                 "type": "string",
-                "description": "A valid GROQ query targeting the exact document _type and _id.",
+                "description": "A valid GROQ query projecting exact document fields.",
             }
         },
         "required": ["query"],
