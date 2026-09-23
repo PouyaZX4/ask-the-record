@@ -275,8 +275,7 @@ def ask(question, keys, contexts, token, state):
             "\n\nThis endpoint queries the dataset directly with GROQ.\n"
             "Schema & Type Routing Rules:\n"
             "- Questions naming 'claim-*' MUST query _type == 'claim' by exact _id.\n"
-            "- Questions naming 'finding' or B-codes MUST query _type == 'finding'.\n"
-            "- Questions about patch/merge MUST query _type == 'patch' with findingRef._ref.\n"
+            "- Questions about patch/merge MUST query _type == 'patch' filtering 'finding-<ID>' in findings[]._ref.\n"
             "- SOURCES must include the document's sourceUrl field — a resolvable http(s) URL.\n"
         )
 
@@ -324,9 +323,6 @@ def ask(question, keys, contexts, token, state):
         violations.append("UNCERTAINTY is empty")
 
     # A verdict that does not parse is a VIOLATION, never an exemption.
-    # The old pattern was ([A-Z_]+): "standing" and "123" failed to match, became
-    # None, and None is falsy — which silently skipped every check gated on it.
-    # Reproduced 2026-09-21 by an independent review seat.
     lines = re.findall(r"^[ \t]*VERDICT:[ \t]*(.*)$", answer, re.M)
     v = None
     if len(lines) != 1:
@@ -339,7 +335,6 @@ def ask(question, keys, contexts, token, state):
             violations.append(f"VERDICT {raw[:40]!r} is not a contract value")
         else:
             v = raw
-    # Unparseable verdict must not buy an exemption: treat it as evidence-bearing.
     evidence_bearing = v != "INSUFFICIENT_EVIDENCE"
 
     if evidence_bearing and state["reads"] == 0:
@@ -352,8 +347,6 @@ def ask(question, keys, contexts, token, state):
         if instrument == "data" and not re.search(r"https?://\S+", src_text):
             violations.append("dataset answer carries no resolvable URL (A19/R7)")
         if instrument == "kb":
-            # A19 asked AND, not OR. v6 shipped OR and only passed because the model
-            # volunteered both — a request, not a control.
             if not re.search(r"\b[a-z0-9_]+/[a-z0-9_]+", src_text):
                 violations.append("KB answer cites no entry path (A19/R7)")
             if KB not in src_text:
